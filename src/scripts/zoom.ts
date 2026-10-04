@@ -9,8 +9,8 @@ const progress = document.querySelector<HTMLElement>('.progress')!;
 const number = document.querySelector<HTMLElement>('.progress-number')!;
 const header = document.querySelector<HTMLElement>('.header')!;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-// The hanging white cable in the supplied 1182 × 665 photograph.
-const focus = { x: 0.474, y: 0.722 };
+// The hanging white cable in the original 6000 × 3376 photograph.
+const focus = { x: 0.489, y: 0.7 };
 let current = 0;
 let target = 0;
 let animation = 0;
@@ -24,8 +24,8 @@ let framedOffsetY = 0;
 function measure() {
   frameWidth = frame.clientWidth;
   frameHeight = frame.clientHeight;
-  const sourceWidth = image.naturalWidth || 1182;
-  const sourceHeight = image.naturalHeight || 665;
+  const sourceWidth = image.naturalWidth || 6000;
+  const sourceHeight = image.naturalHeight || 3376;
   const cover = Math.max(frameWidth / sourceWidth, frameHeight / sourceHeight);
   focusX = (frameWidth - sourceWidth * cover) / 2 + sourceWidth * cover * focus.x;
   focusY = (frameHeight - sourceHeight * cover) / 2 + sourceHeight * cover * focus.y;
