@@ -60,7 +60,8 @@ npm run build
 フォントはローカル配信するため、外部フォントサービスへの接続は不要です。
 
 写真は `public/images/FP002119.JPG` の原本（6000 × 3376）を使用しています。
-同解像度で AVIF に変換した `public/images/FP002119.avif` を優先表示し、AVIF 非対応ブラウザでは原本の JPEG に切り替えます。
+`<picture>` で同解像度の AVIF → WebP → 原本 JPEG の順に、ブラウザが対応する形式を選びます。
+変換画像は `public/images/FP002119.avif` と `public/images/FP002119.webp`、JPEG は `public/images/FP002119.JPG` です。
 画像の生成・拡大補間・トリミングは行っていません。ズーム位置はこの原本のケーブルに合わせています。
 
 ## Cloudflare Workers へのデプロイ
