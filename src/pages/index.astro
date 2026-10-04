@@ -27,11 +27,23 @@ const photo = '/images/FP002119.JPG';
         <div class="stage">
           <div class="image-window">
             <div class="photo-layer">
+              <div class="parallax-plane" data-parallax-depth="0.08">
               <picture>
                 <source srcset="/images/FP002119.avif" type="image/avif" />
                 <source srcset="/images/FP002119.webp" type="image/webp" />
                 <img id="scene" src={photo} alt="赤レンガ倉庫の間に立つ人物。左腰から白いケーブルが垂れている。" width="6000" height="3376" fetchpriority="high" draggable="false" />
               </picture>
+              <picture class="background-patch" data-layer-picture aria-hidden="true">
+                <source data-srcset="/images/FP002119-background-patch.webp" type="image/webp" />
+                <img data-src="/images/FP002119-background-patch.png" alt="" width="6000" height="3376" decoding="async" draggable="false" />
+              </picture>
+              </div>
+              <div class="parallax-plane person-plane" data-parallax-depth="0.6" aria-hidden="true">
+                <picture data-layer-picture>
+                  <source data-srcset="/images/FP002119-person.webp" type="image/webp" />
+                  <img data-src="/images/FP002119-person.png" alt="" width="6000" height="3376" decoding="async" draggable="false" />
+                </picture>
+              </div>
             </div>
             <div class="image-shade"></div>
             <div class="intro">
@@ -83,7 +95,11 @@ const photo = '/images/FP002119.JPG';
   .stage { position: sticky; top: 0; height: 100svh; --zoom-progress: 0; }
   .image-window { position: absolute; inset: 0; overflow: hidden; background: #619baf; isolation: isolate; clip-path: inset(calc(var(--frame-top) * var(--frame-progress)) calc(var(--frame-side) * var(--frame-progress)) calc(var(--frame-bottom) * var(--frame-progress))); }
   .photo-layer { position: absolute; inset: 0; }
-  #scene { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
+  .parallax-plane { position: absolute; inset: 0; pointer-events: none; }
+  .photo-layer img { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
+  .background-patch, .person-plane { display: none; }
+  .background-patch { position: absolute; inset: 0; }
+  .layers-active .background-patch, .layers-active .person-plane { display: block; }
   .image-shade { position: absolute; inset: 0; background: linear-gradient(90deg, #06161560, transparent 70%), linear-gradient(0deg, #06161555, transparent 30%); pointer-events: none; }
   .intro { position: absolute; left: 5%; top: 15%; color: #fffdf0; opacity: calc(1 - var(--zoom-progress) * 3.5); transform: translateY(calc(var(--zoom-progress) * -60px)); }
   .eyebrow { display: flex; align-items: center; gap: 10px; line-height: 1.8; }
