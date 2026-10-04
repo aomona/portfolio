@@ -20,6 +20,12 @@ let frameHeight = 0;
 let focusX = 0;
 let focusY = 0;
 let framedOffsetY = 0;
+let journeyTop = 0;
+let scrollDistance = 1;
+let previousZoom = -1;
+let previousReveal = -1;
+let previousValue = -1;
+let previousTransform = '';
 
 function measure() {
   frameWidth = frame.clientWidth;
@@ -31,6 +37,9 @@ function measure() {
   focusY = (frameHeight - sourceHeight * cover) / 2 + sourceHeight * cover * focus.y;
   const styles = getComputedStyle(stage);
   framedOffsetY = (parseFloat(styles.getPropertyValue('--frame-top')) - parseFloat(styles.getPropertyValue('--frame-bottom'))) / 2;
+  // Read layout on resize/load, rather than on every scroll event.
+  journeyTop = journey.getBoundingClientRect().top + scrollY;
+  scrollDistance = Math.max(1, journey.offsetHeight - stage.offsetHeight);
   updateTarget();
   render();
 }
@@ -44,13 +53,27 @@ function render() {
   const scale = reducedMotion.matches ? 1 : Math.exp(Math.log(9) * eased);
   const x = (frameWidth / 2 - focusX) * scale * eased;
   const y = (frameHeight / 2 - focusY) * scale * eased + framedOffsetY * reveal;
-  layer.style.transform = `translate3d(${reducedMotion.matches ? 0 : x}px, ${reducedMotion.matches ? 0 : y}px, 0) scale(${scale})`;
-  stage.style.setProperty('--zoom-progress', String(zoom));
-  document.documentElement.style.setProperty('--frame-progress', String(reveal));
-  header.inert = reveal < 0.95;
+  const transform = `translate3d(${reducedMotion.matches ? 0 : x}px, ${reducedMotion.matches ? 0 : y}px, 0) scale(${scale})`;
+  if (transform !== previousTransform) {
+    layer.style.transform = transform;
+    previousTransform = transform;
+  }
+  if (zoom !== previousZoom) {
+    stage.style.setProperty('--zoom-progress', String(zoom));
+    previousZoom = zoom;
+  }
+  if (reveal !== previousReveal) {
+    document.documentElement.style.setProperty('--frame-progress', String(reveal));
+    previousReveal = reveal;
+  }
+  const inert = reveal < 0.95;
+  if (header.inert !== inert) header.inert = inert;
   const value = Math.round(current * 100);
-  number.textContent = String(value).padStart(2, '0');
-  progress.setAttribute('aria-valuenow', String(value));
+  if (value !== previousValue) {
+    number.textContent = String(value).padStart(2, '0');
+    progress.setAttribute('aria-valuenow', String(value));
+    previousValue = value;
+  }
 }
 
 function tick(time: number) {
@@ -61,14 +84,26 @@ function tick(time: number) {
   if (Math.abs(target - current) < 0.0001) current = target;
   render();
   if (current !== target) animation = requestAnimationFrame(tick);
-  else { animation = 0; lastTime = 0; }
+  else {
+    animation = 0;
+    lastTime = 0;
+    layer.style.willChange = 'auto';
+  }
 }
 
 function updateTarget() {
-  const distance = Math.max(1, journey.offsetHeight - stage.offsetHeight);
-  target = Math.max(0, Math.min(1, -journey.getBoundingClientRect().top / distance));
-  if (reducedMotion.matches) { current = target; render(); }
-  else if (!animation) animation = requestAnimationFrame(tick);
+  target = Math.max(0, Math.min(1, (scrollY - journeyTop) / scrollDistance));
+  if (reducedMotion.matches) {
+    cancelAnimationFrame(animation);
+    animation = 0;
+    lastTime = 0;
+    layer.style.willChange = 'auto';
+    current = target;
+    render();
+  } else if (!animation && current !== target) {
+    layer.style.willChange = 'transform';
+    animation = requestAnimationFrame(tick);
+  }
 }
 
 addEventListener('scroll', updateTarget, { passive: true });
