@@ -1,17 +1,130 @@
 ---
-
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/dm-sans/700.css';
+import '@fontsource/instrument-serif/400-italic.css';
+const photo = '/F6002158-4C42-4D40-A2EA-78AD303C0D2C_1_105_c.jpeg';
 ---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="遠くから、細部へ。スクロールで一枚の風景を旅する aomona のポートフォリオ。" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#eeeee7" />
+    <title>aomona — A closer look</title>
+  </head>
+  <body>
+    <header class="header">
+      <a class="wordmark" href="#top" aria-label="aomona トップへ">aomona<span class="wordmark-dot">.</span></a>
+      <span class="header-note">A PERSONAL PERSPECTIVE</span>
+      <a class="index-link" href="#after">A closer look <span aria-hidden="true">↗</span></a>
+    </header>
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+    <main>
+      <section id="top" class="journey" aria-label="スクロールして風景の細部へ近づく">
+        <div class="stage">
+          <div class="image-window">
+            <div class="photo-layer">
+              <img id="scene" src={photo} alt="赤レンガ倉庫の間に立つ人物。左腰から白いケーブルが垂れている。" width="1182" height="665" fetchpriority="high" draggable="false" />
+            </div>
+            <div class="image-shade"></div>
+            <div class="intro">
+              <p class="eyebrow"><span></span> ONE FRAME. A DIFFERENT PERSPECTIVE.</p>
+              <h1>A closer<br /><em>look.</em></h1>
+              <p class="intro-note">何気ない風景の、その先へ。</p>
+            </div>
+            <div class="detail-copy" aria-hidden="true">
+              <span class="detail-line"></span>
+              <p>It's all in<br /><em>the details.</em></p>
+              <span class="detail-subtitle">小さなものに、目を向ける。</span>
+            </div>
+            <div class="image-meta"><span>YOKOHAMA, JAPAN</span><span>35°27′ N / 139°38′ E</span></div>
+          </div>
+          <div class="stage-bottom">
+            <div class="scroll-cue"><span class="arrow" aria-hidden="true">↓</span><span>SCROLL TO EXPLORE</span></div>
+            <div class="progress" role="progressbar" aria-label="ズームの進み具合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="progress-track"><span class="progress-fill"></span></span><span class="progress-number">00</span><span class="progress-total">/ 100</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="after" class="after">
+        <p class="eyebrow">01 / A CLOSER LOOK</p>
+        <h2>少し近づくと、<br />見えるものがある。</h2>
+        <div class="after-bottom"><p>風景から、人へ。人から、小さなディテールへ。<br />スクロールで視点を変える、小さな実験。</p><a href="#top">もう一度、眺める <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </main>
+    <footer><span>© {new Date().getFullYear()} AOMONA</span><span>MADE TO BE EXPLORED.</span></footer>
+    <script>import '../scripts/zoom';</script>
+  </body>
 </html>
+
+<style is:global>
+  :root { font-family: 'DM Sans', sans-serif; color: #252a27; background: #eeeee7; font-synthesis: none; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+  body { margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible { outline: 2px solid #477655; outline-offset: 6px; }
+  .header { position: fixed; top: 0; left: 0; width: 100%; height: 92px; display: flex; align-items: center; justify-content: space-between; padding: 0 4vw; z-index: 3; background: #eeeee7; }
+  .wordmark { font-size: 29px; font-weight: 700; letter-spacing: -1.8px; }
+  .wordmark-dot { color: #738565; }
+  .header-note, .index-link, .eyebrow, .image-meta, .stage-bottom, footer { font-size: 10px; font-weight: 500; letter-spacing: 1.7px; }
+  .header-note { color: #777c72; }
+  .index-link { letter-spacing: .3px; font-size: 12px; }
+  .index-link span { margin-left: 28px; }
+  .journey { position: relative; height: 420svh; }
+  .stage { position: sticky; top: 0; height: 100svh; padding: 92px 4vw 0; display: flex; flex-direction: column; --zoom-progress: 0; }
+  .image-window { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #619baf; isolation: isolate; }
+  .photo-layer { position: absolute; inset: 0; will-change: transform; }
+  #scene { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
+  .image-shade { position: absolute; inset: 0; background: linear-gradient(90deg, #06161560, transparent 70%), linear-gradient(0deg, #06161555, transparent 30%); pointer-events: none; }
+  .intro { position: absolute; left: 5%; top: 15%; color: #fffdf0; opacity: calc(1 - var(--zoom-progress) * 3.5); transform: translateY(calc(var(--zoom-progress) * -60px)); }
+  .eyebrow { display: flex; align-items: center; gap: 10px; line-height: 1.8; }
+  .eyebrow span { width: 5px; height: 5px; background: #d9e9bf; border-radius: 50%; }
+  h1 { margin: 32px 0 20px; font-size: clamp(72px, 9.5vw, 160px); line-height: .86; letter-spacing: -.075em; font-weight: 500; }
+  h1 em, .detail-copy em { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; letter-spacing: -.04em; }
+  .intro-note { margin-top: 28px; font-size: 12px; letter-spacing: 2px; }
+  .detail-copy { position: absolute; top: 17%; right: 7%; color: #fffdf0; opacity: clamp(0, calc((var(--zoom-progress) - .58) * 4), 1); transform: translateY(calc((1 - var(--zoom-progress)) * 30px)); }
+  .detail-line { display: block; height: 1px; width: 32px; background: #fffdf0; }
+  .detail-copy p { font-size: clamp(32px, 4vw, 66px); line-height: 1; letter-spacing: -.05em; margin: 22px 0; }
+  .detail-subtitle { font-size: 11px; letter-spacing: 1px; }
+  .image-meta { position: absolute; bottom: 26px; left: 30px; right: 30px; color: #fffdf0; display: flex; justify-content: space-between; font-size: 9px; letter-spacing: 1.3px; }
+  .stage-bottom { height: 68px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .scroll-cue { display: flex; align-items: center; gap: 16px; font-size: 9px; }
+  .arrow { font-size: 21px; font-weight: 400; animation: nudge 2.8s ease-in-out infinite; }
+  .progress { display: flex; align-items: center; gap: 10px; font-size: 10px; font-variant-numeric: tabular-nums; }
+  .progress-track { width: 100px; height: 1px; background: #252a2729; margin-right: 12px; }
+  .progress-fill { display: block; height: 1px; background: #252a27; width: 100%; transform-origin: left; transform: scaleX(var(--zoom-progress)); }
+  .progress-total { color: #8b8e83; }
+  .after { padding: 120px 9vw 100px; }
+  .after .eyebrow { color: #757b6c; font-size: 9px; }
+  h2 { font-size: clamp(30px, 4.8vw, 70px); font-weight: 400; line-height: 1.5; letter-spacing: -.06em; margin: 40px 0 65px; }
+  .after-bottom { display: flex; align-items: end; justify-content: space-between; gap: 30px; }
+  .after-bottom p { margin: 0; color: #7a8074; font-size: 12px; line-height: 2.1; }
+  .after-bottom a { font-size: 12px; border-bottom: 1px solid #b6b9ac; padding-bottom: 12px; }
+  .after-bottom a span { margin-left: 35px; }
+  footer { margin: 0 4vw; padding: 25px 0; border-top: 1px solid #d1d4c8; display: flex; justify-content: space-between; font-size: 8px; color: #7a8074; }
+  @keyframes nudge { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
+  @media (max-width: 640px) {
+    .header { height: 72px; padding: 0 5vw; }
+    .header-note { display: none; }
+    .wordmark { font-size: 25px; }
+    .stage { padding: 72px 5vw 0; }
+    .intro { top: 9%; left: 7%; }
+    .intro .eyebrow { font-size: 7px; letter-spacing: 1px; }
+    h1 { font-size: clamp(66px, 19vw, 110px); margin-top: 24px; }
+    .intro-note { font-size: 10px; }
+    .image-meta { left: 18px; right: 18px; bottom: 20px; font-size: 7px; }
+    .image-meta span:last-child { display: none; }
+    .detail-copy { top: 12%; right: 9%; }
+    .stage-bottom { height: 60px; }
+    .scroll-cue { font-size: 7px; gap: 8px; letter-spacing: 1px; }
+    .progress-track { width: 45px; margin-right: 0; }
+    .progress { gap: 6px; font-size: 8px; }
+    .after { padding: 85px 8vw; }
+    .after-bottom { align-items: start; flex-direction: column; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .arrow { animation: none; } .photo-layer { will-change: auto; } .journey { height: 180svh; } }
+</style>
