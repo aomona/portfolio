@@ -7,6 +7,7 @@ const layer = document.querySelector<HTMLElement>('.photo-layer')!;
 const image = document.querySelector<HTMLImageElement>('#scene')!;
 const progress = document.querySelector<HTMLElement>('.progress')!;
 const number = document.querySelector<HTMLElement>('.progress-number')!;
+const header = document.querySelector<HTMLElement>('.header')!;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 // The hanging white cable in the supplied 1182 × 665 photograph.
 const focus = { x: 0.474, y: 0.722 };
@@ -18,6 +19,7 @@ let frameWidth = 0;
 let frameHeight = 0;
 let focusX = 0;
 let focusY = 0;
+let framedOffsetY = 0;
 
 function measure() {
   frameWidth = frame.clientWidth;
@@ -27,18 +29,25 @@ function measure() {
   const cover = Math.max(frameWidth / sourceWidth, frameHeight / sourceHeight);
   focusX = (frameWidth - sourceWidth * cover) / 2 + sourceWidth * cover * focus.x;
   focusY = (frameHeight - sourceHeight * cover) / 2 + sourceHeight * cover * focus.y;
+  const styles = getComputedStyle(stage);
+  framedOffsetY = (parseFloat(styles.getPropertyValue('--frame-top')) - parseFloat(styles.getPropertyValue('--frame-bottom'))) / 2;
   updateTarget();
   render();
 }
 
 function render() {
-  // A gentle acceleration and deceleration, with exponential zoom for even perceived speed.
-  const eased = current * current * (3 - 2 * current);
+  // Zoom first, reveal the frame second, then hold before the sticky stage releases.
+  const zoom = Math.min(1, current / 0.65);
+  const eased = zoom * zoom * (3 - 2 * zoom);
+  const framing = Math.max(0, Math.min(1, (current - 0.65) / 0.25));
+  const reveal = reducedMotion.matches ? framing : framing * framing * (3 - 2 * framing);
   const scale = reducedMotion.matches ? 1 : Math.exp(Math.log(9) * eased);
   const x = (frameWidth / 2 - focusX) * scale * eased;
-  const y = (frameHeight / 2 - focusY) * scale * eased;
+  const y = (frameHeight / 2 - focusY) * scale * eased + framedOffsetY * reveal;
   layer.style.transform = `translate3d(${reducedMotion.matches ? 0 : x}px, ${reducedMotion.matches ? 0 : y}px, 0) scale(${scale})`;
-  stage.style.setProperty('--zoom-progress', String(current));
+  stage.style.setProperty('--zoom-progress', String(zoom));
+  document.documentElement.style.setProperty('--frame-progress', String(reveal));
+  header.inert = reveal < 0.95;
   const value = Math.round(current * 100);
   number.textContent = String(value).padStart(2, '0');
   progress.setAttribute('aria-valuenow', String(value));

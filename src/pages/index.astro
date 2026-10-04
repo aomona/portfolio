@@ -42,6 +42,7 @@ const photo = '/F6002158-4C42-4D40-A2EA-78AD303C0D2C_1_105_c.jpeg';
             </div>
             <div class="image-meta"><span>YOKOHAMA, JAPAN</span><span>35°27′ N / 139°38′ E</span></div>
           </div>
+          <div class="initial-cue" aria-hidden="true"><span class="arrow">↓</span> SCROLL TO EXPLORE</div>
           <div class="stage-bottom">
             <div class="scroll-cue"><span class="arrow" aria-hidden="true">↓</span><span>SCROLL TO EXPLORE</span></div>
             <div class="progress" role="progressbar" aria-label="ズームの進み具合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="progress-track"><span class="progress-fill"></span></span><span class="progress-number">00</span><span class="progress-total">/ 100</span></div>
@@ -61,13 +62,13 @@ const photo = '/F6002158-4C42-4D40-A2EA-78AD303C0D2C_1_105_c.jpeg';
 </html>
 
 <style is:global>
-  :root { font-family: 'DM Sans', sans-serif; color: #252a27; background: #eeeee7; font-synthesis: none; }
+  :root { font-family: 'DM Sans', sans-serif; color: #252a27; background: #eeeee7; font-synthesis: none; --frame-progress: 0; --frame-top: 92px; --frame-side: 4vw; --frame-bottom: 68px; }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; scroll-padding-top: 80px; }
   body { margin: 0; }
   a { color: inherit; text-decoration: none; }
   a:focus-visible { outline: 2px solid #477655; outline-offset: 6px; }
-  .header { position: fixed; top: 0; left: 0; width: 100%; height: 92px; display: flex; align-items: center; justify-content: space-between; padding: 0 4vw; z-index: 3; background: #eeeee7; }
+  .header { position: fixed; top: 0; left: 0; width: 100%; height: var(--frame-top); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--frame-side); z-index: 3; background: #eeeee7; opacity: var(--frame-progress); transform: translateY(calc((1 - var(--frame-progress)) * -10px)); }
   .wordmark { font-size: 29px; font-weight: 700; letter-spacing: -1.8px; }
   .wordmark-dot { color: #738565; }
   .header-note, .index-link, .eyebrow, .image-meta, .stage-bottom, footer { font-size: 10px; font-weight: 500; letter-spacing: 1.7px; }
@@ -75,8 +76,8 @@ const photo = '/F6002158-4C42-4D40-A2EA-78AD303C0D2C_1_105_c.jpeg';
   .index-link { letter-spacing: .3px; font-size: 12px; }
   .index-link span { margin-left: 28px; }
   .journey { position: relative; height: 420svh; }
-  .stage { position: sticky; top: 0; height: 100svh; padding: 92px 4vw 0; display: flex; flex-direction: column; --zoom-progress: 0; }
-  .image-window { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #619baf; isolation: isolate; }
+  .stage { position: sticky; top: 0; height: 100svh; --zoom-progress: 0; }
+  .image-window { position: absolute; inset: 0; overflow: hidden; background: #619baf; isolation: isolate; clip-path: inset(calc(var(--frame-top) * var(--frame-progress)) calc(var(--frame-side) * var(--frame-progress)) calc(var(--frame-bottom) * var(--frame-progress))); }
   .photo-layer { position: absolute; inset: 0; will-change: transform; }
   #scene { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; }
   .image-shade { position: absolute; inset: 0; background: linear-gradient(90deg, #06161560, transparent 70%), linear-gradient(0deg, #06161555, transparent 30%); pointer-events: none; }
@@ -90,8 +91,10 @@ const photo = '/F6002158-4C42-4D40-A2EA-78AD303C0D2C_1_105_c.jpeg';
   .detail-line { display: block; height: 1px; width: 32px; background: #fffdf0; }
   .detail-copy p { font-size: clamp(32px, 4vw, 66px); line-height: 1; letter-spacing: -.05em; margin: 22px 0; }
   .detail-subtitle { font-size: 11px; letter-spacing: 1px; }
-  .image-meta { position: absolute; bottom: 26px; left: 30px; right: 30px; color: #fffdf0; display: flex; justify-content: space-between; font-size: 9px; letter-spacing: 1.3px; }
-  .stage-bottom { height: 68px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .image-meta { position: absolute; bottom: calc(26px + var(--frame-bottom) * var(--frame-progress)); left: calc(30px + var(--frame-side) * var(--frame-progress)); right: calc(30px + var(--frame-side) * var(--frame-progress)); color: #fffdf0; display: flex; justify-content: space-between; font-size: 9px; letter-spacing: 1.3px; }
+  .initial-cue { position: absolute; bottom: 28px; left: 5%; color: #fffdf0; display: flex; align-items: center; gap: 16px; font-size: 9px; letter-spacing: 1.7px; opacity: calc(1 - var(--frame-progress)); pointer-events: none; }
+  .image-meta { opacity: var(--frame-progress); }
+  .stage-bottom { position: absolute; bottom: 0; left: var(--frame-side); right: var(--frame-side); height: var(--frame-bottom); display: flex; align-items: center; justify-content: space-between; opacity: var(--frame-progress); }
   .scroll-cue { display: flex; align-items: center; gap: 16px; font-size: 9px; }
   .arrow { font-size: 21px; font-weight: 400; animation: nudge 2.8s ease-in-out infinite; }
   .progress { display: flex; align-items: center; gap: 10px; font-size: 10px; font-variant-numeric: tabular-nums; }
@@ -108,15 +111,15 @@ const photo = '/F6002158-4C42-4D40-A2EA-78AD303C0D2C_1_105_c.jpeg';
   footer { margin: 0 4vw; padding: 25px 0; border-top: 1px solid #d1d4c8; display: flex; justify-content: space-between; font-size: 8px; color: #7a8074; }
   @keyframes nudge { 0%, 100% { transform: translateY(-3px); } 50% { transform: translateY(3px); } }
   @media (max-width: 640px) {
+    :root { --frame-top: 72px; --frame-side: 5vw; --frame-bottom: 60px; }
     .header { height: 72px; padding: 0 5vw; }
     .header-note { display: none; }
     .wordmark { font-size: 25px; }
-    .stage { padding: 72px 5vw 0; }
     .intro { top: 9%; left: 7%; }
     .intro .eyebrow { font-size: 7px; letter-spacing: 1px; }
     h1 { font-size: clamp(66px, 19vw, 110px); margin-top: 24px; }
     .intro-note { font-size: 10px; }
-    .image-meta { left: 18px; right: 18px; bottom: 20px; font-size: 7px; }
+    .image-meta { left: calc(18px + var(--frame-side) * var(--frame-progress)); right: calc(18px + var(--frame-side) * var(--frame-progress)); bottom: calc(20px + var(--frame-bottom) * var(--frame-progress)); font-size: 7px; }
     .image-meta span:last-child { display: none; }
     .detail-copy { top: 12%; right: 9%; }
     .stage-bottom { height: 60px; }
