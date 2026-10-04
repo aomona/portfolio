@@ -33,6 +33,11 @@ function measure() {
   const sourceWidth = image.naturalWidth || 6000;
   const sourceHeight = image.naturalHeight || 3376;
   const cover = Math.max(frameWidth / sourceWidth, frameHeight / sourceHeight);
+  // Position cropped overlays in the same cover rectangle as the original photo.
+  layer.style.setProperty('--photo-width', `${sourceWidth * cover}px`);
+  layer.style.setProperty('--photo-height', `${sourceHeight * cover}px`);
+  layer.style.setProperty('--photo-left', `${(frameWidth - sourceWidth * cover) / 2}px`);
+  layer.style.setProperty('--photo-top', `${(frameHeight - sourceHeight * cover) / 2}px`);
   focusX = (frameWidth - sourceWidth * cover) / 2 + sourceWidth * cover * focus.x;
   focusY = (frameHeight - sourceHeight * cover) / 2 + sourceHeight * cover * focus.y;
   const styles = getComputedStyle(stage);

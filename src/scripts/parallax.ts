@@ -58,7 +58,7 @@ async function loadLayers() {
         }
         const image = picture.querySelector('img')!;
         image.src = image.dataset.src!;
-        // Wait for both layers; failed assets leave the original photograph intact.
+        // Activate atomically; failed assets leave the original photograph intact.
         await image.decode();
       }));
       ready = true;
