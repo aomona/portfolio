@@ -123,3 +123,5 @@ npm run deploy
 `cf:build` は `.cloudflare/output/` を毎回生成し直します。
 `deploy` は `cf deploy --prebuilt` で検証済みビルドを公開します。
 GitHub Actions の「Run workflow」から `main` を指定して手動実行することもできます。
+機能ブランチを選んで手動実行すると、別の `aomona-portfolio-preview` Worker にデプロイします。
+テストURLは実行結果に表示されます。同じテスト用Workerを次のプレビューで更新します。
