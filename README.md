@@ -56,3 +56,32 @@ npm run build
 アニメーションは `requestAnimationFrame` と時間ベースの補間を使い、スクロール停止後も滑らかに追従します。
 端末の「視差効果を減らす」設定ではズームを無効にします。
 フォントはローカル配信するため、外部フォントサービスへの接続は不要です。
+
+## Cloudflare Workers へのデプロイ
+
+Cloudflare 公式の `cf` CLI（`1.0.0-beta.12`）を開発依存関係として固定しています。
+`npm ci` でインストールされ、`npm exec -- cf --version` で確認できます。
+
+`main` への push で GitHub Actions が型チェック、静的ビルド、Workers へのデプロイを実行します。
+GitHub リポジトリの Settings → Secrets and variables → Actions → Repository secrets に登録してください。
+
+- `CLOUDFLARE_API_TOKEN`: 対象アカウントの Workers Scripts を編集できる API トークン
+- `CLOUDFLARE_ACCOUNT_ID`: 対象の Cloudflare アカウント ID
+
+Environment secrets は使用しません。トークンをファイルに書いたりコミットしたりしないでください。
+
+Worker 名は `cloudflare.config.ts` の `aomona-portfolio` です。
+Astro の `dist/` を `cf` の Build Output Specification に変換し、静的アセットのみ配信します。
+SSR アダプターや Worker の JavaScript は使用しません。
+
+```sh
+npm run check
+npm run cf:build
+npm run deploy -- --dry-run
+# 認証済みの環境で本番にデプロイ
+npm run deploy
+```
+
+`cf:build` は `.cloudflare/output/` を毎回生成し直します。
+`deploy` は `cf deploy --prebuilt` で検証済みビルドを公開します。
+GitHub Actions の「Run workflow」から `main` を指定して手動実行することもできます。
