@@ -30,6 +30,7 @@ for (const part of layout.parts) {
   if (info.width !== part.width || info.height !== part.height) throw new Error(`Unexpected ${part.name} mask dimensions`);
   const foreground = Buffer.alloc(part.width * part.height * 4);
   const patch = Buffer.alloc(foreground.length);
+  const coverOpacity = value => part.name === 'person' ? (value > 4 ? 255 : 0) : value;
   for (let y = 0; y < part.height; y++) for (let x = 0; x < part.width; x++) {
     const index = y * part.width + x;
     const source = ((y + part.y) * width + x + part.x) * 3;
@@ -52,11 +53,13 @@ for (const part of layout.parts) {
       foreground[p + 3] = opacity;
     }
     // Cover only a two-source-pixel fringe. No broad sky band around rooflines.
-    let patchAlpha = opacity;
+    // Soft hair belongs to the moving foreground. Fully cover its old position
+    // so increased displacement does not expose a second, stationary outline.
+    let patchAlpha = coverOpacity(opacity);
     for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
       const nx = x + dx, ny = y + dy;
       if (nx >= 0 && nx < part.width && ny >= 0 && ny < part.height) {
-        patchAlpha = Math.max(patchAlpha, alpha[ny * part.width + nx]);
+        patchAlpha = Math.max(patchAlpha, coverOpacity(alpha[ny * part.width + nx]));
       }
     }
     if (patchAlpha) {

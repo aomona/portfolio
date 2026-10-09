@@ -36,11 +36,11 @@ function render() {
   // Return to the high-resolution original before the cable becomes enlarged.
   const strength = Math.max(0, 2 - zoomScale) ** 2;
   // Shared vertical travel keeps feet planted and architectural edges aligned.
-  const y = currentY * 0.03 * 18 * strength;
+  const y = currentY * 0.03 * 45 * strength;
   // Grow edge coverage with the spring position, avoiding a zoom jump on load.
-  const overscan = 1 + 0.004 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
+  const overscan = 1 + 0.01 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
   for (let i = 0; i < planes.length; i++) {
-    const x = currentX * depths[i] * 24 * strength;
+    const x = currentX * depths[i] * 60 * strength;
     const transform = active
       ? `translate3d(${x}px, ${y}px, 0) scale(${overscan})`
       : 'none';
