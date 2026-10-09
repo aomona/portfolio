@@ -8,6 +8,6 @@
   "groups": [
     { "name": "buildings", "depth": 0.10 },
     { "name": "crowds", "depth": 0.06 },
-    { "name": "person", "depth": 0 }
+    { "name": "person", "depth": 0.02 }
   ]
 }

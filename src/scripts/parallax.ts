@@ -36,7 +36,7 @@ function render() {
   }
   // Return to the high-resolution original before the cable becomes enlarged.
   const strength = Math.max(0, 2 - zoomScale) ** 2;
-  // Depth-dependent shifts behind a stationary subject, without rotating planes.
+  // Shift subjects by depth over the stationary ground, without rotating planes.
   // Cached bounds limit travel on smaller windows without per-frame layout reads.
   const viewportScale = Math.min(1, bounds.width / 1000, bounds.height / 600);
   const motionStrength = strength * viewportScale;
