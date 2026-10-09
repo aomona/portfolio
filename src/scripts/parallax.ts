@@ -1,6 +1,7 @@
 // Progressive enhancement: original photo first, optional layers on mouse input.
 const frame = document.querySelector<HTMLElement>('.image-window')!;
 const photo = document.querySelector<HTMLElement>('.photo-layer')!;
+const original = photo.querySelector<HTMLImageElement>('#scene')!;
 const planes = Array.from(frame.querySelectorAll<HTMLElement>('[data-parallax-depth]'));
 const layerPictures = Array.from(frame.querySelectorAll<HTMLPictureElement>('[data-layer-picture]'));
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
@@ -39,13 +40,11 @@ function render() {
   // Cached bounds limit travel on smaller windows without per-frame layout reads.
   const viewportScale = Math.min(1, bounds.width / 1000, bounds.height / 600);
   const motionStrength = strength * viewportScale;
-  // Cover translated edges; the fixed person never scales or tilts.
-  const overscan = 1 + 0.024 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
   for (let i = 0; i < planes.length; i++) {
     const x = -currentX * depths[i] * 60 * motionStrength;
     const y = -currentY * depths[i] * 18 * motionStrength;
     const transform = active && depths[i] > 0
-      ? `translate3d(${x}px, ${y}px, 0) scale(${overscan})`
+      ? `translate3d(${x}px, ${y}px, 0)`
       : 'none';
     if (previous[i] !== transform) {
       planes[i].style.transform = transform;
@@ -67,6 +66,9 @@ async function loadLayers() {
         // Activate atomically; failed assets leave the original photograph intact.
         await image.decode();
       }));
+      // Reuse the browser-selected original beneath the moving planes to fill
+      // exposed outer edges, without changing scale as the pointer settles.
+      photo.style.backgroundImage = `url(${JSON.stringify(original.currentSrc || original.src)})`;
       ready = true;
       render();
       start();
