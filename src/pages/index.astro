@@ -30,25 +30,27 @@ const cropStyle = (layer: { x: number; y: number; width: number; height: number 
         <div class="stage">
           <div class="image-window">
             <div class="photo-layer">
-              <div class="parallax-plane" data-parallax-depth="0.02" data-layer-name="sky">
+              <div class="parallax-plane" data-parallax-depth="0.02" data-layer-name="background">
               <picture>
                 <source srcset="/images/FP002119.avif" type="image/avif" />
                 <source srcset="/images/FP002119.webp" type="image/webp" />
                 <img id="scene" src={photo} alt="赤レンガ倉庫の間に立つ人物。左腰から白いケーブルが垂れている。" width="6000" height="3376" fetchpriority="high" draggable="false" />
               </picture>
-              {layerLayout.patches.map(layer => (
+              {layerLayout.parts.map(layer => (
                 <picture class="scene-patch layer-crop" style={cropStyle(layer)} data-layer-picture aria-hidden="true">
-                  <source data-srcset={`/images/FP002119-${layer.name}.webp`} type="image/webp" />
-                  <img data-src={`/images/FP002119-${layer.name}.png`} alt="" width={layer.outputWidth} height={layer.outputHeight} decoding="async" draggable="false" />
+                  <source data-srcset={`/images/FP002119-${layer.name}-patch.webp`} type="image/webp" />
+                  <img data-src={`/images/FP002119-${layer.name}-patch.png`} alt="" width={layer.outputWidth} height={layer.outputHeight} decoding="async" draggable="false" />
                 </picture>
               ))}
               </div>
-              {layerLayout.planes.map(layer => (
-              <div class="parallax-plane optional-plane" data-parallax-depth={layer.depth} data-layer-name={layer.name} aria-hidden="true">
+              {layerLayout.groups.map(group => (
+              <div class="parallax-plane optional-plane" data-parallax-depth={group.depth} data-layer-name={group.name} aria-hidden="true">
+                {layerLayout.parts.filter(layer => layer.group === group.name).map(layer => (
                 <picture class="layer-crop" style={cropStyle(layer)} data-layer-picture>
                   <source data-srcset={`/images/FP002119-${layer.name}.webp`} type="image/webp" />
                   <img data-src={`/images/FP002119-${layer.name}.png`} alt="" width={layer.outputWidth} height={layer.outputHeight} decoding="async" draggable="false" />
                 </picture>
+                ))}
               </div>
               ))}
             </div>

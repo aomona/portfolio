@@ -1,13 +1,13 @@
 {
-  "patches": [
-    { "name": "background-patch", "x": 2700, "y": 1300, "width": 800, "height": 1900, "outputWidth": 800, "outputHeight": 1900 },
-    { "name": "warehouse-left-patch", "x": 0, "y": 450, "width": 2250, "height": 2400, "outputWidth": 1125, "outputHeight": 1200 },
-    { "name": "warehouse-right-patch", "x": 4350, "y": 450, "width": 1650, "height": 2400, "outputWidth": 825, "outputHeight": 1200 }
+  "parts": [
+    { "name": "warehouse-left", "group": "buildings", "x": 0, "y": 450, "width": 2250, "height": 2400, "outputWidth": 1125, "outputHeight": 1200 },
+    { "name": "warehouse-right", "group": "buildings", "x": 4350, "y": 450, "width": 1650, "height": 2400, "outputWidth": 825, "outputHeight": 1200 },
+    { "name": "crowds", "group": "crowds", "x": 0, "y": 2100, "width": 6000, "height": 650, "outputWidth": 3000, "outputHeight": 325 },
+    { "name": "person", "group": "person", "x": 2700, "y": 1300, "width": 800, "height": 1900, "outputWidth": 800, "outputHeight": 1900 }
   ],
-  "planes": [
-    { "name": "warehouse-left", "depth": 0.06, "x": 0, "y": 450, "width": 2250, "height": 2400, "outputWidth": 1125, "outputHeight": 1200 },
-    { "name": "warehouse-right", "depth": 0.07, "x": 4350, "y": 450, "width": 1650, "height": 2400, "outputWidth": 825, "outputHeight": 1200 },
-    { "name": "ground", "depth": 0.16, "x": 0, "y": 2580, "width": 6000, "height": 796, "outputWidth": 3000, "outputHeight": 398 },
-    { "name": "person", "depth": 0.16, "x": 2700, "y": 1300, "width": 800, "height": 1900, "outputWidth": 800, "outputHeight": 1900 }
+  "groups": [
+    { "name": "buildings", "depth": 0.05 },
+    { "name": "crowds", "depth": 0.08 },
+    { "name": "person", "depth": 0.16 }
   ]
 }
