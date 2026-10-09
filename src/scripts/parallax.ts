@@ -35,11 +35,14 @@ function render() {
   }
   // Return to the high-resolution original before the cable becomes enlarged.
   const strength = Math.max(0, 2 - zoomScale) ** 2;
+  // Shared vertical travel keeps feet planted and architectural edges aligned.
+  const y = currentY * 0.03 * 18 * strength;
+  // Grow edge coverage with the spring position, avoiding a zoom jump on load.
+  const overscan = 1 + 0.004 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
   for (let i = 0; i < planes.length; i++) {
     const x = currentX * depths[i] * 24 * strength;
-    const y = currentY * depths[i] * 18 * strength;
     const transform = active
-      ? `translate3d(${x}px, ${y}px, 0) scale(${1 + 0.012 * strength})`
+      ? `translate3d(${x}px, ${y}px, 0) scale(${overscan})`
       : 'none';
     if (previous[i] !== transform) {
       planes[i].style.transform = transform;
@@ -78,8 +81,9 @@ function tick(time: number) {
   const steps = Math.ceil(delta / 8);
   const dt = delta / steps / 1000;
   for (let step = 0; step < steps; step++) {
-    velocityX += ((targetX - currentX) * 100 - velocityX * 16) * dt;
-    velocityY += ((targetY - currentY) * 100 - velocityY * 16) * dt;
+    // Critical damping follows smoothly without a rubber-like overshoot.
+    velocityX += ((targetX - currentX) * 100 - velocityX * 20) * dt;
+    velocityY += ((targetY - currentY) * 100 - velocityY * 20) * dt;
     currentX += velocityX * dt;
     currentY += velocityY * dt;
   }
