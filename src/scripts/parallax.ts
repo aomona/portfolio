@@ -35,14 +35,19 @@ function render() {
   }
   // Return to the high-resolution original before the cable becomes enlarged.
   const strength = Math.max(0, 2 - zoomScale) ** 2;
-  // Shared vertical travel keeps feet planted and architectural edges aligned.
-  const y = currentY * 0.03 * 45 * strength;
-  // Grow edge coverage with the spring position, avoiding a zoom jump on load.
-  const overscan = 1 + 0.01 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
+  // Orbit the scenery around the subject rather than moving the person.
+  // Cached bounds limit travel on smaller windows without per-frame layout reads.
+  const viewportScale = Math.min(1, bounds.width / 1000, bounds.height / 600);
+  const cameraStrength = strength * viewportScale;
+  const pitch = currentY * 0.6 * cameraStrength;
+  const yaw = -currentX * 0.9 * cameraStrength;
+  // Cover the edges as the camera turns; the fixed person never scales or tilts.
+  const overscan = 1 + 0.03 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
   for (let i = 0; i < planes.length; i++) {
-    const x = currentX * depths[i] * 60 * strength;
-    const transform = active
-      ? `translate3d(${x}px, ${y}px, 0) scale(${overscan})`
+    const x = -currentX * depths[i] * 60 * cameraStrength;
+    const y = -currentY * depths[i] * 18 * cameraStrength;
+    const transform = active && depths[i] > 0
+      ? `translate3d(${x}px, ${y}px, 0) perspective(1400px) rotateX(${pitch}deg) rotateY(${yaw}deg) scale(${overscan})`
       : 'none';
     if (previous[i] !== transform) {
       planes[i].style.transform = transform;
@@ -101,7 +106,9 @@ function tick(time: number) {
 
 function start() {
   if (!enabled() || animation) return;
-  for (const plane of planes) plane.style.willChange = 'transform';
+  for (let i = 0; i < planes.length; i++) {
+    if (depths[i] > 0) planes[i].style.willChange = 'transform';
+  }
   animation = requestAnimationFrame(tick);
 }
 
