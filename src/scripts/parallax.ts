@@ -35,19 +35,17 @@ function render() {
   }
   // Return to the high-resolution original before the cable becomes enlarged.
   const strength = Math.max(0, 2 - zoomScale) ** 2;
-  // Orbit the scenery around the subject rather than moving the person.
+  // Depth-dependent shifts behind a stationary subject, without rotating planes.
   // Cached bounds limit travel on smaller windows without per-frame layout reads.
   const viewportScale = Math.min(1, bounds.width / 1000, bounds.height / 600);
-  const cameraStrength = strength * viewportScale;
-  const pitch = currentY * 0.6 * cameraStrength;
-  const yaw = -currentX * 0.9 * cameraStrength;
-  // Cover the edges as the camera turns; the fixed person never scales or tilts.
-  const overscan = 1 + 0.03 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
+  const motionStrength = strength * viewportScale;
+  // Cover translated edges; the fixed person never scales or tilts.
+  const overscan = 1 + 0.024 * Math.max(Math.abs(currentX), Math.abs(currentY)) * strength;
   for (let i = 0; i < planes.length; i++) {
-    const x = -currentX * depths[i] * 60 * cameraStrength;
-    const y = -currentY * depths[i] * 18 * cameraStrength;
+    const x = -currentX * depths[i] * 60 * motionStrength;
+    const y = -currentY * depths[i] * 18 * motionStrength;
     const transform = active && depths[i] > 0
-      ? `translate3d(${x}px, ${y}px, 0) perspective(1400px) rotateX(${pitch}deg) rotateY(${yaw}deg) scale(${overscan})`
+      ? `translate3d(${x}px, ${y}px, 0) scale(${overscan})`
       : 'none';
     if (previous[i] !== transform) {
       planes[i].style.transform = transform;
