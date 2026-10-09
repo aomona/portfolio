@@ -1,4 +1,4 @@
-export {};
+import { updateParallaxZoom } from './parallax';
 
 const journey = document.querySelector<HTMLElement>('.journey')!;
 const stage = document.querySelector<HTMLElement>('.stage')!;
@@ -33,6 +33,11 @@ function measure() {
   const sourceWidth = image.naturalWidth || 6000;
   const sourceHeight = image.naturalHeight || 3376;
   const cover = Math.max(frameWidth / sourceWidth, frameHeight / sourceHeight);
+  // Position cropped overlays in the same cover rectangle as the original photo.
+  layer.style.setProperty('--photo-width', `${sourceWidth * cover}px`);
+  layer.style.setProperty('--photo-height', `${sourceHeight * cover}px`);
+  layer.style.setProperty('--photo-left', `${(frameWidth - sourceWidth * cover) / 2}px`);
+  layer.style.setProperty('--photo-top', `${(frameHeight - sourceHeight * cover) / 2}px`);
   focusX = (frameWidth - sourceWidth * cover) / 2 + sourceWidth * cover * focus.x;
   focusY = (frameHeight - sourceHeight * cover) / 2 + sourceHeight * cover * focus.y;
   const styles = getComputedStyle(stage);
@@ -51,6 +56,7 @@ function render() {
   const framing = Math.max(0, Math.min(1, (current - 0.65) / 0.25));
   const reveal = reducedMotion.matches ? framing : framing * framing * (3 - 2 * framing);
   const scale = reducedMotion.matches ? 1 : Math.exp(Math.log(9) * eased);
+  updateParallaxZoom(scale);
   const x = (frameWidth / 2 - focusX) * scale * eased;
   const y = (frameHeight / 2 - focusY) * scale * eased + framedOffsetY * reveal;
   const transform = `translate3d(${reducedMotion.matches ? 0 : x}px, ${reducedMotion.matches ? 0 : y}px, 0) scale(${scale})`;

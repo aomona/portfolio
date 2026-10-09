@@ -19,9 +19,12 @@ if (!result.success) throw result.error;
 const { worker, accountId, complianceRegion } = result.data;
 const settings = { accountId, complianceRegion };
 if (!worker || worker.entrypoint) throw new Error('Expected an assets-only Worker configuration.');
+const target = process.env.CLOUDFLARE_DEPLOY_TARGET || 'production';
+if (!['production', 'preview'].includes(target)) throw new Error('Unknown Cloudflare deployment target.');
+const deploymentWorker = target === 'preview' ? { ...worker, name: `${worker.name}-preview` } : worker;
 await cleanBuildOutputDir(root);
 await writeRootConfig(root, settings, context);
-await writeWorkerConfig({ root, config: worker });
+await writeWorkerConfig({ root, config: deploymentWorker });
 await writeAssets({ root, sourceDirectory: `${root}dist` });
 const output = await readBuildOutput(root);
 if (!output.workers.default.assetsDir || output.workers.default.bundleDir) {
